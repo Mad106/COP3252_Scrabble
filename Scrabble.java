@@ -1,9 +1,15 @@
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.*;
 
 public class Scrabble{
 	
 	private JFrame frame;
+	private JFrame prompt;
+	private TextField people;
+	private TextField computers;
+	private JButton start;
+	private JLabel welcome;
 	
 	public static void main(String[] args){
 		Scrabble game = new Scrabble();
@@ -11,23 +17,79 @@ public class Scrabble{
 	}
 	
 	public Scrabble(){
-		//set up jframe
-		frame = new JFrame("Scrabble");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(700,500);
+		//prompt user
+		prompt = new JFrame("Prompt");
+		prompt.setSize(200,250);
 		
-		JLabel title = new JLabel("Scrabble");
-		title.setHorizontalAlignment(JLabel.CENTER);
-		frame.add(title,BorderLayout.PAGE_START);
+		welcome = new JLabel("Welcome");
+		welcome.setHorizontalAlignment(JLabel.CENTER);
+		prompt.add(welcome);
+		JLabel number_info = new JLabel("2-4 players");
+		number_info.setHorizontalAlignment(JLabel.CENTER);
+		prompt.add(number_info);
 		
-		BoardPanel board = new BoardPanel(); //board is 15x15
-		board.setLayout(new GridLayout(15,15));
-		frame.add(board,BorderLayout.CENTER);
+		JLabel people_text = new JLabel("players (people)");
+		people_text.setHorizontalAlignment(JLabel.CENTER);
+		prompt.add(people_text);
+		people = new TextField();
+		prompt.add(people);
+		JLabel computers_text = new JLabel("players (computers)");
+		computers_text.setHorizontalAlignment(JLabel.CENTER);
+		prompt.add(computers_text);
+		computers = new TextField();
+		prompt.add(computers);
 		
-		JLabel temp = new JLabel("this is to show what happens");
-		frame.add(temp,BorderLayout.LINE_END);
+		start = new JButton("START");
+		prompt.add(start);
 		
-		frame.setVisible(true);
+		prompt.setLayout(new GridLayout(7,1));
+		prompt.setVisible(true);
+		
+		//event handler
+		ScrabbleHandler handler = new ScrabbleHandler();
+		start.addActionListener(handler);
+		
+	}
+	
+	//inner class for event handling
+	private class ScrabbleHandler implements ActionListener{
+		public void actionPerformed(ActionEvent event){
+			if(event.getSource() == start){
+				
+				int total = Integer.parseInt(people.getText()) + Integer.parseInt(computers.getText());
+				
+				if(total < 2){
+					welcome.setText("Total of players under 2");
+				}else if(total > 4){
+					welcome.setText("Total of players over 4");
+				}else{
+					prompt.setVisible(false);
+					
+					frame = new JFrame("Scrabble");
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					frame.setSize(700,500);
+					
+					JLabel title = new JLabel("Scrabble");
+					title.setHorizontalAlignment(JLabel.CENTER);
+					frame.add(title,BorderLayout.PAGE_START);
+					
+					BoardPanel board = new BoardPanel(); //board is 15x15
+					board.setLayout(new GridLayout(15,15));
+					frame.add(board,BorderLayout.CENTER);
+					
+					JLabel temp = new JLabel("this is to show what happens");
+					frame.add(temp,BorderLayout.LINE_END);
+					
+					frame.setVisible(true);
+				}
+				
+				
+				
+				
+			}
+			
+			
+		}	
 	}
 	
 }
