@@ -149,7 +149,7 @@ public class Scrabble{
 						char letter;
 						//still need to set up tile arrays
 						for(int j = 0; j < 7; j++){
-							d.gridx = 2;
+							d.gridx = 2 + j;
 							d.gridy = (3*i) + 2;
 							
 							if(j == 0){	//initialize arrays that will be used for game
@@ -451,6 +451,9 @@ public class Scrabble{
 					this.add(tiles[i][j]);
 				}
 			}
+			
+			//points per letter
+			
 		}
 		
 		//inner class for event handling
