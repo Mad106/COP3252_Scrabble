@@ -131,6 +131,15 @@ public class Scrabble{
 					c.gridy = 1;
 					frame.add(board,c);
 					
+					//States points per letters
+					JLabel points = new JLabel();
+					points.setText("<HTML>Points per letter: <BR> 1 point: A   E   I   O   U   L   N   S   T   R <BR> 2 points: D   G <BR> 3 points: B   C   M   P <BR> 4 points: F   H   V   W   Y <BR> 5 points: K <BR> 8 points: J X <BR> 10 points: Q Z </HTML>");
+					c.gridx = 1;
+					c.gridy = 1;
+					c.insets = new Insets(20,20,0,0);
+					c.anchor= GridBagConstraints.NORTHEAST;
+					frame.add(points,c);
+					
 					//second half of window (still in process)
 					JPanel right_side = new JPanel();
 					right_side.setLayout(new GridBagLayout());
