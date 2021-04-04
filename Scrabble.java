@@ -28,6 +28,7 @@ public class Scrabble{
 	private int replace;		//how many tiles to replace at end of turn
 	private JButton end_game;
 	private JButton restart;
+	private JButton replace_tile;
 	
 	public static void main(String[] args){
 		game = new Scrabble();
@@ -111,6 +112,7 @@ public class Scrabble{
 	}
 	
 	int points(JButton tile){
+		
 		switch(tile.getText().charAt(0)){	//given tile and returns points
 			case 'A': return 1;
 			case 'B': return 3;
@@ -144,8 +146,46 @@ public class Scrabble{
 		return 0;
 	}
 	
-	void addToPoints(int num){
-		turn_points += num;
+	JButton[] replaceTile(JButton player[]){
+		String letter = board.clicked.getText();
+		for(int i = 0; i < 7; i++){
+			if(letter == player[i].getText()){
+				player[i].setText(String.valueOf(game.setPlayerTiles()));
+			}
+		}
+		
+		switch(letter.charAt(0)){	//given tile and returns points
+			case 'A': board.available[0]++;
+			case 'B': board.available[1]++;
+			case 'C': board.available[2]++;
+			case 'D': board.available[3]++;
+			case 'E': board.available[4]++;
+			case 'F': board.available[5]++;
+			case 'G': board.available[6]++;
+			case 'H': board.available[7]++;
+			case 'I': board.available[8]++;
+			case 'J': board.available[9]++;
+			case 'K': board.available[10]++;
+			case 'L': board.available[11]++;
+			case 'M': board.available[12]++;
+			case 'N': board.available[13]++;
+			case 'O': board.available[14]++;
+			case 'P': board.available[15]++;
+			case 'Q': board.available[16]++;
+			case 'R': board.available[17]++;
+			case 'S': board.available[18]++;
+			case 'T': board.available[19]++;
+			case 'U': board.available[20]++;
+			case 'V': board.available[21]++;
+			case 'W': board.available[22]++;
+			case 'X': board.available[23]++;
+			case 'Y': board.available[24]++;
+			case 'Z': board.available[25]++;
+			case ' ': board.available[26]++;
+		}
+		
+		return player;
+		
 	}
 	
 	
@@ -173,7 +213,7 @@ public class Scrabble{
 					
 					frame = new JFrame("Scrabble");
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					frame.setSize(700,600);
+					frame.setSize(700,650);
 					frame.setLayout(new GridBagLayout());
 					GridBagConstraints c = new GridBagConstraints();
 					
@@ -202,18 +242,25 @@ public class Scrabble{
 					c.anchor= GridBagConstraints.NORTHEAST;
 					frame.add(points,c);
 					
+					//replace selected tile button
+					replace_tile = new JButton("Replace Selected Tile");
+					c.gridx = 1;
+					c.gridy = 2;
+					frame.add(replace_tile,c);
+					replace_tile.addActionListener(handler);
+					
 					//button indicates whose turn it is and when clicked shifts to new player
 					turn = 1;
 					end_turn = new JButton("Player 1 End Turn");
 					c.gridx = 1;
-					c.gridy = 2;
+					c.gridy = 3;
 					frame.add(end_turn,c);
 					//event handler
 					end_turn.addActionListener(handler);
 					
 					end_game = new JButton("End Game");
 					c.gridx = 1;
-					c.gridy = 3;
+					c.gridy = 4;
 					frame.add(end_game,c);
 					end_game.addActionListener(handler);
 					
@@ -402,6 +449,22 @@ public class Scrabble{
 				
 			}else if(event.getSource() == restart){
 				game = new Scrabble();
+			}else if(event.getSource() == replace_tile){
+				char letter = game.setPlayerTiles();
+				switch(turn){
+					case 1:
+						player1 = replaceTile(player1);
+						break;
+					case 2:
+						player2 = replaceTile(player2);
+						break;
+					case 3:
+						player3 = replaceTile(player3);
+						break;
+					case 4:
+						player4 = replaceTile(player4);
+						break;
+				}
 			}else{	//if a player's tile is clicked
 				JButton temp[] = new JButton[7];
 				switch(turn){	//only valid it is their turn
