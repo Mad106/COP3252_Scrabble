@@ -28,6 +28,8 @@ public class Scrabble{
 	private int replace;		//how many tiles to replace at end of turn
 	private JButton end_game;
 	private JButton restart;
+	private int BagTotal;	
+	private int playercheck;
 	
 	public static void main(String[] args){
 		game = new Scrabble();
@@ -60,6 +62,7 @@ public class Scrabble{
 		prompt.setLayout(new GridLayout(7,1));
 		prompt.setVisible(true);
 		
+		BagTotal = 100;
 		//event handler
 		ScrabbleHandler handler = new ScrabbleHandler();	//once start button clicked
 		start.addActionListener(handler);
@@ -73,6 +76,7 @@ public class Scrabble{
 		
 		do{
 			index = rand.nextInt(27);
+			BagTotal--;
 		}while(board.available[index] == 0);
 		
 		board.available[index]--;
@@ -288,6 +292,10 @@ public class Scrabble{
 							}
 							
 						}
+						if (BagTotal == 0){
+							EmptyBag();
+						}
+
 						
 					}
 					
@@ -743,12 +751,160 @@ public class Scrabble{
 							}
 							
 							
-						}
+						}//end of if(event.getSource)
 					}
-				}
+				}//end of for loop for array
 				
+								
+
+
+			}//end of Action Performed class
+		}//end of Action Listener class 
+		
+		void EmptyBag(){
+			boolean lastletter = false;	
+			boolean possibleplays = false;
+			boolean finish = false;
+			JButton noplay = new JButton("");
+			playercheck = 0;
+			int emptycheck1 = 1;
+			int emptycheck2 = 1;
+			int emptycheck3 = 1;
+			int emptycheck4 = 1;
+			
+			NoPlayHandler handler2 = new NoPlayHandler();
+			end_turn.addActionListener(handler2);
+			
+			do
+			{
+			 
+			
+			for (int i = 0; i < 7; i++)
+                        {
+                        	if (player1[i] == noplay)
+				{
+					emptycheck1++;	
+				}
+				if (player2[i] == noplay)
+				{
+					emptycheck2++;
+				}
+                        }
+			if (total == 2)
+			{
+				if (emptycheck1 == 7 && emptycheck2 == 7)
+					finish = true;
 			}
-		}
+			else if (total == 3)
+			{
+				for (int i = 0; i < 7; i++) 
+	                        {       
+                                	if (player3[i] == noplay)
+                                	{      	 
+                                        	emptycheck3++;  
+                                	}       
+				}
+				if (emptycheck1 == 7 && emptycheck2 == 7 && emptycheck3 == 7)
+                                        finish = true;
+			}
+			else if (total == 4)
+                        {
+                                for (int i = 0; i < 7; i++)
+                                {
+                                        if (player4[i] == noplay)
+                                        {
+                                                emptycheck4++;
+                                        }
+                                }
+                                if (emptycheck1 == 7 && emptycheck2 == 7 && emptycheck3 == 7 && emptycheck4 == 7)
+                                        finish = true;
+
+                        }
+			
+			if (playercheck == total)
+			{
+				finish = true;
+			}
+			}while(finish == false);
+			
+			frame.setVisible(false);
+                        game_over = new JFrame("Game Over");
+                        game_over.setSize(200,200);
+                        game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                        JLabel end1 = new JLabel("Game Ended");
+                        end1.setHorizontalAlignment(JLabel.CENTER);
+                                game_over.add(end1);
+
+                                int high_score = 0;
+                                StringBuilder winner = new StringBuilder("Player 1");
+                                for(int i = 0; i < total; i++){
+                                        if(player_points[i] > high_score){
+                                                high_score = player_points[i];
+                                                winner.replace(0,7,"Player " + (i+1));
+                                        }
+                                }
+
+                                JLabel end2 = new JLabel("Winner");
+                                end2.setHorizontalAlignment(JLabel.CENTER);
+                                game_over.add(end2);
+
+                                JLabel end3 = new JLabel(String.valueOf(winner));
+                                end3.setHorizontalAlignment(JLabel.CENTER);
+                                game_over.add(end3);
+
+                                JLabel end4 = new JLabel(String.valueOf(high_score));
+                                end4.setHorizontalAlignment(JLabel.CENTER);
+                                game_over.add(end4);
+
+                                restart = new JButton("Restart Game");
+                                game_over.add(restart);
+                                ScrabbleHandler handler = new ScrabbleHandler();
+                                restart.addActionListener(handler);
+
+                                game_over.setLayout(new GridLayout(5,1));
+                                game_over.setVisible(true);			
+
+		
+				
+			
+		}//end of EmptyBag class
+		 private class NoPlayHandler implements ActionListener{
+                        public void actionPerformed(ActionEvent event){
+
+			playercheck++;				
+			switch(turn){
+                                        case 1:
+                                                turn = 2;
+                                                end_turn.setText("Player 2 End Turn");
+                                                break;
+                                        case 2:
+                                                if(total < 3){
+                                                        turn = 1;
+                                                        end_turn.setText("Player 1 End Turn");
+                                                }else{
+                                                        turn = 3;
+                                                        end_turn.setText("Player 3 End Turn");
+                                                }
+                                                break;
+                                        case 3:
+                                                if(total < 4){
+                                                        turn = 1;
+                                                        end_turn.setText("Player 1 End Turn");
+                                                }else{
+                                                        turn = 4;
+                                                        end_turn.setText("Player 4 End Turn");
+                                                }
+                                                break;
+                                        case 4:
+                                                turn = 1;
+                                                end_turn.setText("Player 1 End Turn");
+                                                break;
+                                }
+			
+	
+			}//end of action performed
+		}//end of NoPlayHandler
 	}
 	
 }
