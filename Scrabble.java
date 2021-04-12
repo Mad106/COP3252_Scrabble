@@ -28,8 +28,18 @@ public class Scrabble{
 	private int replace;		//how many tiles to replace at end of turn
 	private JButton end_game;
 	private JButton restart;
+	private int BagTotal;
+	private boolean finish = false;
+	private JButton noplay = new JButton("");
+	private int playercheck = 1;
+	private int emptycheck1 = 1;
+	private int emptycheck2 = 1;
+	private int emptycheck3 = 1;
+	private int emptycheck4 = 1;
+	private boolean BagTotalOnceCheck = false;
+	private JButton noPlays = new JButton();
 	private JButton replace_tile;
-	
+
 	public static void main(String[] args){
 		game = new Scrabble();
 		return;
@@ -61,11 +71,12 @@ public class Scrabble{
 		prompt.setLayout(new GridLayout(7,1));
 		prompt.setVisible(true);
 		
+		BagTotal = 100;
 		//event handler
 		ScrabbleHandler handler = new ScrabbleHandler();	//once start button clicked
 		start.addActionListener(handler);
 		
-	}
+	}//end of public Scrabble()
 	
 	char setPlayerTiles(){	//returns valid tile
 		
@@ -74,6 +85,7 @@ public class Scrabble{
 		
 		do{
 			index = rand.nextInt(27);
+			BagTotal--;
 		}while(board.available[index] == 0);
 		
 		board.available[index]--;
@@ -109,10 +121,10 @@ public class Scrabble{
 		}
 		
 		return ' ';
-	}
+	}//end of setPlayerTiles
 	
 	int points(JButton tile){
-		
+
 		switch(tile.getText().charAt(0)){	//given tile and returns points
 			case 'A': return 1;
 			case 'B': return 3;
@@ -144,7 +156,7 @@ public class Scrabble{
 		}
 		
 		return 0;
-	}
+	}//end of points
 	
 	JButton[] replaceTile(JButton player[]){
 		String letter = board.clicked.getText();
@@ -153,7 +165,7 @@ public class Scrabble{
 				player[i].setText(String.valueOf(game.setPlayerTiles()));
 			}
 		}
-		
+
 		switch(letter.charAt(0)){	//given tile and returns points
 			case 'A': board.available[0]++;
 			case 'B': board.available[1]++;
@@ -183,11 +195,14 @@ public class Scrabble{
 			case 'Z': board.available[25]++;
 			case ' ': board.available[26]++;
 		}
-		
+
 		return player;
-		
+
 	}
-	
+	void addToPoints(int num){
+		turn_points += num;
+	}//end of addToPoints
+
 	
 	//inner class for event handling
 	private class ScrabbleHandler implements ActionListener{
@@ -248,7 +263,7 @@ public class Scrabble{
 					c.gridy = 2;
 					frame.add(replace_tile,c);
 					replace_tile.addActionListener(handler);
-					
+
 					//button indicates whose turn it is and when clicked shifts to new player
 					turn = 1;
 					end_turn = new JButton("Player 1 End Turn");
@@ -276,6 +291,7 @@ public class Scrabble{
 					for(int i = 0; i < total; i++){
 						int num = i + 1;
 						JLabel player_num = new JLabel();
+
 						player_num.setText("Player " + num);
 						d.gridx = 2;
 						d.gridy = (3*i) + 1;
@@ -335,7 +351,8 @@ public class Scrabble{
 							}
 							
 						}
-						
+
+
 					}
 					
 					turn = 1;	//start with player1
@@ -344,14 +361,17 @@ public class Scrabble{
 				
 			}else if(event.getSource() == end_turn){
 				//adds total points for that turn to players total and goes to next player
+				noPlays.setVisible(false);
+				if (BagTotalOnceCheck == true){
+					BagTotal = 1;
+					playercheck = 1;
+				}
 				if(board.tw)
 					turn_points *= 3;
 				if(board.dw)
 					turn_points *= 2;
-				
 				player_points[turn-1] += turn_points;
 				point_label[turn-1].setText("Points: " + player_points[turn-1]);
-				
 				char letter;
 				
 				while(replace > 0){
@@ -407,7 +427,35 @@ public class Scrabble{
 				turn_points = 0;
 				board.dw = false;
 				board.tw = false;
-				
+				if (BagTotal <= 0)
+				{
+					noPlays.setVisible(false);
+					GridBagConstraints c1 = new GridBagConstraints();
+					BagTotalOnceCheck = true;
+					BagTotal = 0;
+					emptycheck1 = 1;
+					emptycheck2= 1;
+					emptycheck3 =1;
+					emptycheck4 =1;
+					playercheck = 0;
+					end_turn.setVisible(true);
+					if (turn == 1)
+						noPlays.setText("Player 1 No Plays Available");
+					else if (turn ==2)
+						noPlays.setText("Player 2 No Plays Available");
+					else if (turn == 3)
+						noPlays.setText("Player 3 No Plays Available");
+					else
+						noPlays.setText("Player 4 No Plays Available");
+					noPlays.setVisible(true);
+					c1.gridx = 1;
+                                        c1.gridy = 1;
+                                        frame.add(noPlays,c1);
+					noPlays.addActionListener(new NoPlayHandler());
+
+				}
+
+
 			}else if(event.getSource() == end_game){
 				frame.setVisible(false);
 				game_over = new JFrame("Game Over");
@@ -803,16 +851,138 @@ public class Scrabble{
 										player4[7 - game.replace].setText(" ");
 										break;
 								}
+								//BagTotal = BagTotal - game.replace;
 							}
 							
 							
-						}
+						}//end of if(event.getSource)
 					}
-				}
-				
-			}
-		}
-	}
-	
-}
+				}//end of for loop for array
 
+
+
+
+			}//end of Action Performed class
+		}//end of Action Listener class
+	}//end of JPanelclass
+		 private class NoPlayHandler implements ActionListener{
+                        public void actionPerformed(ActionEvent event){
+			if (BagTotalOnceCheck == true)
+			{
+				BagTotalOnceCheck = false;
+				playercheck = 1;
+			}
+			else
+				playercheck++;
+			switch(turn){
+                                        case 1:
+                                                turn = 2;
+						end_turn.setText("Player 2 End Turn");
+						noPlays.setText("Player 2 No Plays Available");
+                                                break;
+                                        case 2:
+                                                if(total < 3){
+                                                        turn = 1;
+							end_turn.setText("Player 1 End Turn");
+							 noPlays.setText("Player 1 No Plays Available");
+                                                }else{
+                                                        turn = 3;
+							end_turn.setText("Player 3 End Turn");
+							 noPlays.setText("Player 3 No Plays Available");
+                                                }
+                                                break;
+                                        case 3:
+                                                if(total < 4){
+                                                        turn = 1;
+							end_turn.setText("Player 1 End Turn");
+							 noPlays.setText("Player 1 No Plays Available");
+                                                }else{
+                                                        turn = 4;
+							end_turn.setText("Player 4 End Turn");
+							 noPlays.setText("Player 4 No Plays Available");
+                                                }
+                                                break;
+                                        case 4:
+                                                turn = 1;
+						end_turn.setText("Player 1 End Turn");
+						noPlays.setText("Player 1 No Plays Available");
+                                                break;
+                                }
+
+						for (int i = 0; i < 7; i++){
+                                                        if (player1[i].equals(noplay))
+                                                                emptycheck1++;
+                                                        if (player2[i] == noplay)
+                                                                emptycheck2++;
+                                                }
+                                                if (total == 2){
+                                                        if (emptycheck1 == 7 && emptycheck2 == 7)
+                                                                finish = true;
+                                                }
+                                                else if (total == 3){
+                                                        for (int i = 0; i < 7; i++){
+                                                                if (player3[i] == noplay)
+                                                                        emptycheck3++;
+                                                        }
+                                                if (emptycheck1 == 7 && emptycheck2 == 7 && emptycheck3 == 7)
+                                                        finish = true;
+                                                }
+                                                else if (total == 4){
+                                                        for (int i = 0; i < 7; i++){
+                                                                if (player4[i] == noplay)
+                                                                        emptycheck4++;
+                                                        }
+                                                	if (emptycheck1 == 7 && emptycheck2 == 7 && emptycheck3 == 7 && emptycheck4 == 7)
+                                                        finish = true;
+                                                }
+                                                if (playercheck == total)
+                                                        finish =true;
+
+					if (playercheck == total || finish == true)
+                                        {
+                                                frame.setVisible(false);
+                                                game_over = new JFrame("Game Over");
+                                                game_over.setSize(200,200);
+                                                game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                                                JLabel end1 = new JLabel("Game Ended");
+                                                end1.setHorizontalAlignment(JLabel.CENTER);
+                                                game_over.add(end1);
+
+                                                int high_score = 0;
+                                                StringBuilder winner = new StringBuilder("Player 1");
+                                                for(int i = 0; i < total; i++){
+                                                        if(player_points[i] > high_score){
+                                                                high_score = player_points[i];
+                                                                winner.replace(0,7,"Player " + (i+1));
+                                                        }
+                                                }
+
+                                                 JLabel end2 = new JLabel("Winner");
+                                                end2.setHorizontalAlignment(JLabel.CENTER);
+                                                game_over.add(end2);
+
+                                                JLabel end3 = new JLabel(String.valueOf(winner));
+                                                end3.setHorizontalAlignment(JLabel.CENTER);
+                                                game_over.add(end3);
+
+                                                JLabel end4 = new JLabel(String.valueOf(high_score));
+                                                end4.setHorizontalAlignment(JLabel.CENTER);
+                                                game_over.add(end4);
+
+                                                restart = new JButton("Restart Game");
+                                                game_over.add(restart);
+                                                ScrabbleHandler handler = new ScrabbleHandler();
+                                                restart.addActionListener(handler);
+
+                                                game_over.setLayout(new GridLayout(5,1));
+                                                game_over.setVisible(true);
+
+                                        }
+
+
+
+			}//end of action performed
+		}//end of NoPlayHandler
+
+}
