@@ -86,7 +86,7 @@ public class Scrabble{
 		do{
 			index = rand.nextInt(27);
 			BagTotal--;
-		}while(board.available[index] == 0);
+		}while(board.available[index] == 0 && BagTotal != 0);
 		
 		board.available[index]--;
 		
@@ -330,24 +330,32 @@ public class Scrabble{
 									player1[j] = new JButton(String.valueOf(letter));
 									right_side.add(player1[j],d);
 									player1[j].addActionListener(handler);
+									player1[j].setBorder(BorderFactory.createLineBorder(Color.RED));
+									player1[j].setPreferredSize(new Dimension(20,20));
 									break;
 								case 1:
 									letter = game.setPlayerTiles();
 									player2[j] = new JButton(String.valueOf(letter));
 									right_side.add(player2[j],d);
 									player2[j].addActionListener(handler);
+									player2[j].setBorder(BorderFactory.createLineBorder(Color.RED));
+									player2[j].setPreferredSize(new Dimension(20,20));
 									break;
 								case 2:
 									letter = game.setPlayerTiles();
 									player3[j] = new JButton(String.valueOf(letter));
 									right_side.add(player3[j],d);
 									player3[j].addActionListener(handler);
+									player3[j].setBorder(BorderFactory.createLineBorder(Color.RED));
+									player3[j].setPreferredSize(new Dimension(20,20));
 									break;
 								case 3:
 									letter = game.setPlayerTiles();
 									player4[j] = new JButton(String.valueOf(letter));
 									right_side.add(player4[j],d);
 									player4[j].addActionListener(handler);
+									player4[j].setBorder(BorderFactory.createLineBorder(Color.RED));
+									player4[j].setPreferredSize(new Dimension(20,20));
 							}
 							
 						}
@@ -361,6 +369,9 @@ public class Scrabble{
 				
 			}else if(event.getSource() == end_turn){
 				//adds total points for that turn to players total and goes to next player
+				
+				System.out.printf("BagTotal = %d\n", BagTotal);
+				
 				noPlays.setVisible(false);
 				if (BagTotalOnceCheck == true){
 					BagTotal = 1;
@@ -379,18 +390,22 @@ public class Scrabble{
 						case 1:
 							letter = game.setPlayerTiles();
 							player1[7 - replace].setText(String.valueOf(letter));
+							player1[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 2:
 							letter = game.setPlayerTiles();
 							player2[7 - replace].setText(String.valueOf(letter));
+							player2[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 3:
 							letter = game.setPlayerTiles();
 							player3[7 - replace].setText(String.valueOf(letter));
+							player2[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 4:
 							letter = game.setPlayerTiles();
 							player4[7 - replace].setText(String.valueOf(letter));
+							player2[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 					}
 					replace--;
@@ -831,24 +846,28 @@ public class Scrabble{
 											game.player1[s].setText(game.player1[s + 1].getText());
 										}
 										player1[7 - game.replace].setText(" ");
+										player1[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 									case 2:
 										for(int s = game.index; s < 7 - game.replace; s++){
 											game.player2[s].setText(game.player2[s + 1].getText());
 										}
 										player2[7 - game.replace].setText(" ");
+										player2[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 									case 3:
 										for(int s = game.index; s < 7 - game.replace; s++){
 											game.player3[s].setText(game.player3[s + 1].getText());
 										}
 										player3[7 - game.replace].setText(" ");
+										player3[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 									case 4:
 										for(int s = game.index; s < 7 - game.replace; s++){
 											game.player4[s].setText(game.player4[s + 1].getText());
 										}
 										player4[7 - game.replace].setText(" ");
+										player4[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 								}
 								//BagTotal = BagTotal - game.replace;
