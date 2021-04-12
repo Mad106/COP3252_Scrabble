@@ -423,7 +423,7 @@ public class Scrabble{
 				for(int i = 0; i < total; i++){
 					if(player_points[i] > high_score){
 						high_score = player_points[i];
-						winner.replace(0,7,"Player " + (i+1));
+						winner.replace(0,10,"Player " + (i+1));
 					}
 				}
 				
