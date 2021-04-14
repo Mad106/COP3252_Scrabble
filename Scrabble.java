@@ -37,6 +37,9 @@ public class Scrabble{
 	private boolean endcheck = false;
 	private JButton noPlays = new JButton();
 	private JButton replace_tile;
+	private JTextField BlankTile;
+        private JLabel BlankLabel;
+        private JButton BTile[];
 
 	public static void main(String[] args){
 		game = new Scrabble();
@@ -275,6 +278,22 @@ public class Scrabble{
 					c.gridy = 4;
 					frame.add(end_game,c);
 					end_game.addActionListener(handler);
+					
+					BlankLabel = new JLabel();
+					BlankLabel.setText("Type a letter: ");
+					c.gridx = 2;
+					c.gridy = 1;
+					frame.add(BlankLabel,c);
+					BlankLabel.setVisible(false);
+					
+					BlankTile = new JTextField(7);
+					c.gridx = 3;
+					c.gridy = 1;
+					c.insets = new Insets(40,20,0,0);
+					c.anchor = GridBagConstraints.NORTHWEST;
+					frame.add(BlankTile,c);
+				        BlankTile.addActionListener(handler);
+					BlankTile.setVisible(false);
 					
 					//second half of window (still in process)
 					JPanel right_side = new JPanel();
@@ -672,11 +691,47 @@ public class Scrabble{
 						i = 7;
 					}
 				}
-				
+				//Checks if button clicked is blank then allows for textfield to become visible
+				for(int i = 0; i < 7; i++)
+				{
+					if(event.getSource() == temp[i])
+					{
+						if(board.clicked == temp[i])
+						{
+							if(temp[i].getText().equals(" "))
+							{
+								BlankLabel.setVisible(true);
+								BlankTile.setVisible(true);
+								BlankButtonHandler handler = new BlankButtonHandler();
+								temp[i].addActionListener(handler);
+								
+							}
+							
+						}
+						
+					}	
+					
+				}
 			}
 			
 			
 		}	
+	}
+
+	//Changes blank button to user input
+	private class BlankButtonHandler implements ActionListener
+	{
+		public void actionPerformed(ActionEvent event)
+		{
+			for(int i =0; i<7; i++)
+			{
+				if(game.player1[i].getText().equals(" "))
+				{
+					System.out.println(BlankTile.getText());
+					game.player1[i].setText(BlankTile.getText());
+				}			
+			}
+		}
 	}
 	
 	private class BoardPanel extends JPanel{
