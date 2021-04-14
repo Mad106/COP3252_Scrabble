@@ -28,10 +28,8 @@ public class Scrabble{
 	private int replace;		//how many tiles to replace at end of turn
 	private JButton end_game;
 	private JButton restart;
-	private int BagTotal;	
+	private int BagTotal;
 	private boolean finish = false;
-        private JButton noplay = new JButton("");
-       	private int playercheck = 1;
         private int emptycheck1 = 1;
         private int emptycheck2 = 1;
         private int emptycheck3 = 1;
@@ -293,29 +291,37 @@ public class Scrabble{
 									player1[j] = new JButton(String.valueOf(letter));
 									right_side.add(player1[j],d);
 									player1[j].addActionListener(handler);
+									player1[j].setBorder(BorderFactory.createLineBorder(Color.RED));
+									player1[j].setPreferredSize(new Dimension(20,20));
 									break;
 								case 1:
 									letter = game.setPlayerTiles();
 									player2[j] = new JButton(String.valueOf(letter));
 									right_side.add(player2[j],d);
 									player2[j].addActionListener(handler);
+									player2[j].setBorder(BorderFactory.createLineBorder(Color.RED));
+									player2[j].setPreferredSize(new Dimension(20,20));
 									break;
 								case 2:
 									letter = game.setPlayerTiles();
 									player3[j] = new JButton(String.valueOf(letter));
 									right_side.add(player3[j],d);
 									player3[j].addActionListener(handler);
+									player3[j].setBorder(BorderFactory.createLineBorder(Color.RED));
+									player3[j].setPreferredSize(new Dimension(20,20));
 									break;
 								case 3:
 									letter = game.setPlayerTiles();
 									player4[j] = new JButton(String.valueOf(letter));
 									right_side.add(player4[j],d);
 									player4[j].addActionListener(handler);
+									player4[j].setBorder(BorderFactory.createLineBorder(Color.RED));
+									player4[j].setPreferredSize(new Dimension(20,20));
 							}
 							
 						}
 
-						
+
 					}
 					
 					turn = 1;	//start with player1
@@ -324,7 +330,8 @@ public class Scrabble{
 				
 			}else if(event.getSource() == end_turn){
 				//adds total points for that turn to players total and goes to next player
-			
+
+				//System.out.printf("BagTotal = %d\n", BagTotal);
 				if(board.tw)
 					turn_points *= 3;
 				if(board.dw)
@@ -332,63 +339,66 @@ public class Scrabble{
 				player_points[turn-1] += turn_points;
 				point_label[turn-1].setText("Points: " + player_points[turn-1]);
 				char letter;
-				int replaceold = 0;
+				
 				while(replace > 0){
 					switch(turn){
 						case 1:
-							
+
 							if (BagTotal <= 0){
 								player1[7 - replace].setText(String.valueOf('-'));
 								player1[7 - replace].setEnabled(false);
-								turn = 1;	
+								turn = 1;
 							}
 							else{
 								letter = game.setPlayerTiles();
                                                         	player1[7 - replace].setText(String.valueOf(letter));
 								turn = 1;
 							}
+							player1[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 2:
-                                                        if (BagTotal <= 0){
-                                                                player2[7 - replace].setText(String.valueOf('-'));
-                                                                player2[7 - replace].setEnabled(false);
-								turn = 2; 
-                                                        }
-                                                        else{
-                                                                letter = game.setPlayerTiles();
-                                                                player2[7 - replace].setText(String.valueOf(letter));
-                                                        	turn = 2;
+							if (BagTotal <= 0){
+								player2[7 - replace].setText(String.valueOf('-'));
+								player2[7 - replace].setEnabled(false);
+								turn = 2;
 							}
-
+							else{
+								letter = game.setPlayerTiles();
+								player2[7 - replace].setText(String.valueOf(letter));
+								turn = 2;
+							}
+							player2[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 3:
 							if (BagTotal <= 0){
-                                                                player3[7 - replace].setText(String.valueOf('-'));
-                                                                player3[7 - replace].setEnabled(false);
-                                                        	turn = 3;
+								player3[7 - replace].setText(String.valueOf('-'));
+								player3[7 - replace].setEnabled(false);
+								turn = 3;
 							}
-                                                        else{
-                                                                letter = game.setPlayerTiles();
-                                                                player3[7 - replace].setText(String.valueOf(letter));
-                                                        	turn = 3;
+							else{
+								letter = game.setPlayerTiles();
+								player3[7 - replace].setText(String.valueOf(letter));
+								turn = 3;
 							}
+							 player3[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 4:
 							if (BagTotal <= 0){
-                                                                player4[7 - replace].setText(String.valueOf('-'));
-                                                              	player4[7 - replace].setEnabled(false);
-                                                        	turn = 4;
+								player4[7 - replace].setText(String.valueOf('-'));
+								player4[7 - replace].setEnabled(false);
+								turn = 4;
 							}
-                                                        else{
-                                                                letter = game.setPlayerTiles();
-                                                                player4[7 - replace].setText(String.valueOf(letter));
-                                                        }
+							else{
+								letter = game.setPlayerTiles();
+								player4[7 - replace].setText(String.valueOf(letter));
+							}
+							player4[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 					}
 					replace--;
 				}
 				switch(total){
-                                        case 2: 
+                                        case 2:
 						for (int i = 0; i < 7; i++){
 							if (player1[i].getText() == "-")
 								player1[i].setEnabled(false);
@@ -398,7 +408,7 @@ public class Scrabble{
                                                 if (player1[0].getText() == "-" || player2[0].getText() == "-")
                                                         endcheck = true;
                                                 break;
-                                        case 3: 
+                                        case 3:
 						for (int i = 0; i < 7; i++){
                                                         if (player1[i].getText() == "-")
                                                                 player1[i].setEnabled(false);
@@ -420,7 +430,7 @@ public class Scrabble{
                                                                 player3[i].setEnabled(false);
 							if (player4[i].getText() == "-")
                                                                 player4[i].setEnabled(false);
-                                                }       
+                                                }
                                                 if (player1[0].getText() == "-" || player2[0].getText() == "-" || player3[0].getText() == "-" || player4[0].getText() == "-" )
                                                         endcheck = true;
                                                 break;
@@ -458,8 +468,24 @@ public class Scrabble{
 				board.dw = false;
 				board.tw = false;
 				if (BagTotal <= 0)
-				{	
-					EmptyBagLabel.setVisible(true);	
+				{
+					EmptyBagLabel.setVisible(true);
+					replace_tile.setVisible(false);
+				}
+				switch(total){
+					case 2:
+						if (player1[0].getText() == "-" || player2[0].getText() == "-")
+							endcheck = true;
+						break;
+					case 3:
+						if (player1[0].getText() == "-" || player2[0].getText() == "-" || player3[0].getText() == "-")
+							endcheck = true;
+						break;
+					case 4:
+						if (player1[0].getText() == "-" || player2[0].getText() == "-" || player3[0].getText() == "-" || player4[0].getText() == "-" )
+							endcheck = true;
+						break;
+
 				}
 				switch(total){
 					case 2:
@@ -479,13 +505,17 @@ public class Scrabble{
 				if (endcheck)
 				{
 					frame.setVisible(false);
+					game_over = new JFrame("Game Over");
+					game_over.setSize(200,200);
+					game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+					JLabel end1 = new JLabel("Game Ended");
+					end1.setHorizontalAlignment(JLabel.CENTER);
+					game_over.add(end1);
+					frame.setVisible(false);
                                 	game_over = new JFrame("Game Over");
                                 	game_over.setSize(200,200);
                                 	game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-                                	JLabel end1 = new JLabel("Game Ended");
-                                	end1.setHorizontalAlignment(JLabel.CENTER);
-                                	game_over.add(end1);
 
                                 	int high_score = 0;
                                 	StringBuilder winner = new StringBuilder("Player 1");
@@ -499,7 +529,6 @@ public class Scrabble{
                                 	JLabel end2 = new JLabel("Winner");
                                 	end2.setHorizontalAlignment(JLabel.CENTER);
                                 	game_over.add(end2);
-
                                 	JLabel end3 = new JLabel(String.valueOf(winner));
                                 	end3.setHorizontalAlignment(JLabel.CENTER);
                                 	game_over.add(end3);
@@ -512,11 +541,10 @@ public class Scrabble{
                         		        game_over.add(restart);
                 	                ScrabbleHandler handler = new ScrabbleHandler();
         	                        restart.addActionListener(handler);
-	
+
         	                        game_over.setLayout(new GridLayout(5,1));
 	                                game_over.setVisible(true);
 
-				
 				}
 
 			}else if(event.getSource() == end_game){
@@ -560,6 +588,22 @@ public class Scrabble{
 				
 			}else if(event.getSource() == restart){
 				game = new Scrabble();
+			}else if(event.getSource() == replace_tile){
+				char letter = game.setPlayerTiles();
+				switch(turn){
+					case 1:
+						player1 = replaceTile(player1);
+						break;
+					case 2:
+						player2 = replaceTile(player2);
+						break;
+					case 3:
+						player3 = replaceTile(player3);
+						break;
+					case 4:
+						player4 = replaceTile(player4);
+						break;
+				}
 			}else{	//if a player's tile is clicked
 				JButton temp[] = new JButton[7];
 				switch(turn){	//only valid it is their turn
@@ -878,39 +922,43 @@ public class Scrabble{
 											game.player1[s].setText(game.player1[s + 1].getText());
 										}
 										player1[7 - game.replace].setText(" ");
+										player1[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 									case 2:
 										for(int s = game.index; s < 7 - game.replace; s++){
 											game.player2[s].setText(game.player2[s + 1].getText());
 										}
 										player2[7 - game.replace].setText(" ");
+										player2[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 									case 3:
 										for(int s = game.index; s < 7 - game.replace; s++){
 											game.player3[s].setText(game.player3[s + 1].getText());
 										}
 										player3[7 - game.replace].setText(" ");
+										player3[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 									case 4:
 										for(int s = game.index; s < 7 - game.replace; s++){
 											game.player4[s].setText(game.player4[s + 1].getText());
 										}
 										player4[7 - game.replace].setText(" ");
+										player4[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 								}
-								
+
 							}
 							
 							
 						}//end of if(event.getSource)
 					}
 				}//end of for loop for array
-				
-								
+
+
 
 
 			}//end of Action Performed class
-		}//end of Action Listener class 
+		}//end of Action Listener class
 	}//end of JPanelclass
 
 }
