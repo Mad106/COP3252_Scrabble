@@ -292,7 +292,8 @@ public class Scrabble{
 					c.insets = new Insets(40,20,0,0);
 					c.anchor = GridBagConstraints.NORTHWEST;
 					frame.add(BlankTile,c);
-				        BlankTile.addActionListener(handler);
+					BlankButtonHandler bhandler = new BlankButtonHandler();
+				        BlankTile.addActionListener(bhandler);
 					BlankTile.setVisible(false);
 					
 					//second half of window (still in process)
@@ -702,8 +703,6 @@ public class Scrabble{
 							{
 								BlankLabel.setVisible(true);
 								BlankTile.setVisible(true);
-								BlankButtonHandler handler = new BlankButtonHandler();
-								temp[i].addActionListener(handler);
 								
 							}
 							
@@ -725,10 +724,12 @@ public class Scrabble{
 		{
 			for(int i =0; i<7; i++)
 			{
-				if(game.player1[i].getText().equals(" "))
+				if(game.player1[i].getText().equals(" ")&& (board.clicked == game.player1[i]))
 				{
-					System.out.println(BlankTile.getText());
 					game.player1[i].setText(BlankTile.getText());
+					BlankTile.setText("");
+					BlankLabel.setVisible(false);
+					BlankTile.setVisible(false);
 				}			
 			}
 		}
