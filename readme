@@ -1,0 +1,22 @@
+Group: Madison Sayles, Jackie Nogueras, Leila Ganichot
+Game: Scrabble
+How to play:
+	This game follow the general rules of Scrabble. However, it does not count tiles that 
+	have not been placed by the player during their turn. Players can play tiles, set a 
+	new value for a blank tile, and replace a tile during their turn, which is displayed 
+	on the end turn button. Played tiles are outlined in red on the Scrabble board as 
+	well as the playable tiles each player has. The tiles are replaced at the end of a 
+	players' turn or when requested. When the "bag" runs out of tiles, this is shown 
+	by the tiles being replaced with the symbol "-" instead of a letter.
+	
+Illegal moves that the program will still allow:
+	- can place a tile anywhere on the board
+	- can place a tile over one that has already been placed on the board
+
+Assumptions:
+	- players know how to spell
+	- players use blank tile directly after setting its new value
+
+Features:
+	- Can replace a tile
+	- Fill in a value for a blank tile (points will still not be allocated for this tile)

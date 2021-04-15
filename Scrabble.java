@@ -28,18 +28,12 @@ public class Scrabble{
 	private int replace;		//how many tiles to replace at end of turn
 	private JButton end_game;
 	private JButton restart;
-	private int BagTotal;	
-	private boolean finish = false;
-        private int emptycheck1 = 1;
-        private int emptycheck2 = 1;
-        private int emptycheck3 = 1;
-        private int emptycheck4 = 1;
-	private boolean endcheck = false;
-	private JButton noPlays = new JButton();
+	private boolean endcheck;
+	private int bagTotal;
 	private JButton replace_tile;
 	private JTextField BlankTile;
-        private JLabel BlankLabel;
-        private JButton BTile[];
+	private JLabel BlankLabel;
+	private boolean count;
 
 	public static void main(String[] args){
 		game = new Scrabble();
@@ -72,7 +66,7 @@ public class Scrabble{
 		prompt.setLayout(new GridLayout(7,1));
 		prompt.setVisible(true);
 		
-		BagTotal = 100;
+		bagTotal = 100;
 		//event handler
 		ScrabbleHandler handler = new ScrabbleHandler();	//once start button clicked
 		start.addActionListener(handler);
@@ -80,15 +74,17 @@ public class Scrabble{
 	}//end of public Scrabble()
 	
 	char setPlayerTiles(){	//returns valid tile
-		
 		Random rand = new Random();
 		int index;
 		
 		do{
 			index = rand.nextInt(27);
-			BagTotal--;
-		}while(board.available[index] == 0);
+		}while(board.available[index] == 0 && bagTotal != 0);
 		
+		if(bagTotal == 0)
+			return '-';
+		
+		bagTotal--;
 		board.available[index]--;
 		
 		switch(index){
@@ -203,6 +199,50 @@ public class Scrabble{
 		turn_points += num;
 	}//end of addToPoints
 	
+	void endFrame(){
+		frame.setVisible(false);
+		game_over = new JFrame("Game Over");
+		game_over.setSize(200,200);
+		game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		JLabel end1 = new JLabel("Game Ended");
+		end1.setHorizontalAlignment(JLabel.CENTER);
+		game_over.add(end1);
+		frame.setVisible(false);
+		game_over = new JFrame("Game Over");
+		game_over.setSize(200,200);
+		game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		int high_score = 0;
+		StringBuilder winner = new StringBuilder("Player 1");
+		for(int i = 0; i < total; i++){
+			if(player_points[i] > high_score){
+				high_score = player_points[i];
+				winner.replace(0,10,"Player " + (i+1));
+			}
+		}
+
+		JLabel end2 = new JLabel("Winner");
+		end2.setHorizontalAlignment(JLabel.CENTER);
+		game_over.add(end2);
+		JLabel end3 = new JLabel(String.valueOf(winner));
+		end3.setHorizontalAlignment(JLabel.CENTER);
+		game_over.add(end3);
+
+		JLabel end4 = new JLabel(String.valueOf(high_score));
+		end4.setHorizontalAlignment(JLabel.CENTER);
+		game_over.add(end4);
+
+		restart = new JButton("Restart Game");
+			game_over.add(restart);
+		ScrabbleHandler handler = new ScrabbleHandler();
+		restart.addActionListener(handler);
+
+		game_over.setLayout(new GridLayout(5,1));
+		game_over.setVisible(true);
+		
+		return;
+	}
 	
 	//inner class for event handling
 	private class ScrabbleHandler implements ActionListener{
@@ -218,6 +258,9 @@ public class Scrabble{
 				}else{	//valid number of players
 					prompt.setVisible(false);		//user can no longer see prompt window
 					
+					endcheck = false;
+					count = true;
+					
 					turn_points = 0;
 					player_points = new int[4];
 					for(int i = 0; i < total; i++){
@@ -228,7 +271,7 @@ public class Scrabble{
 					
 					frame = new JFrame("Scrabble");
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					frame.setSize(700,650);
+					frame.setSize(750,650);
 					frame.setLayout(new GridBagLayout());
 					GridBagConstraints c = new GridBagConstraints();
 					
@@ -293,7 +336,7 @@ public class Scrabble{
 					c.anchor = GridBagConstraints.NORTHWEST;
 					frame.add(BlankTile,c);
 					BlankButtonHandler bhandler = new BlankButtonHandler();
-				        BlankTile.addActionListener(bhandler);
+				    BlankTile.addActionListener(bhandler);
 					BlankTile.setVisible(false);
 					
 					//second half of window (still in process)
@@ -304,15 +347,6 @@ public class Scrabble{
 					
 					point_label = new JLabel[total];
 					
-					//set up empty bag
-					EmptyBagLabel.setText("The Bag is Empty");
-                			c.gridx = 1;
-                			c.gridy = 1;
-					c.insets = new Insets(20,20,0,0);
-					c.anchor= GridBagConstraints.SOUTH;
-                			frame.add(EmptyBagLabel, c);
-					EmptyBagLabel.setVisible(false);
-
 					//goes through for each player
 					for(int i = 0; i < total; i++){
 						int num = i + 1;
@@ -396,7 +430,6 @@ public class Scrabble{
 			}else if(event.getSource() == end_turn){
 				//adds total points for that turn to players total and goes to next player
 
-				//System.out.printf("BagTotal = %d\n", BagTotal);
 				if(board.tw)
 					turn_points *= 3;
 				if(board.dw)
@@ -409,20 +442,20 @@ public class Scrabble{
 					switch(turn){
 						case 1:
 
-							if (BagTotal <= 0){
+							if (bagTotal <= 0){
 								player1[7 - replace].setText(String.valueOf('-'));
 								player1[7 - replace].setEnabled(false);
 								turn = 1;
 							}
 							else{
 								letter = game.setPlayerTiles();
-                                                        	player1[7 - replace].setText(String.valueOf(letter));
+                                player1[7 - replace].setText(String.valueOf(letter));
 								turn = 1;
 							}
 							player1[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 2:
-							if (BagTotal <= 0){
+							if (bagTotal <= 0){
 								player2[7 - replace].setText(String.valueOf('-'));
 								player2[7 - replace].setEnabled(false);
 								turn = 2;
@@ -435,7 +468,7 @@ public class Scrabble{
 							player2[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 3:
-							if (BagTotal <= 0){
+							if (bagTotal <= 0){
 								player3[7 - replace].setText(String.valueOf('-'));
 								player3[7 - replace].setEnabled(false);
 								turn = 3;
@@ -448,7 +481,7 @@ public class Scrabble{
 							 player3[7 - replace].setBorder(BorderFactory.createLineBorder(Color.RED));
 							break;
 						case 4:
-							if (BagTotal <= 0){
+							if (bagTotal <= 0){
 								player4[7 - replace].setText(String.valueOf('-'));
 								player4[7 - replace].setEnabled(false);
 								turn = 4;
@@ -462,45 +495,6 @@ public class Scrabble{
 					}
 					replace--;
 				}
-				switch(total){
-                                        case 2:
-						for (int i = 0; i < 7; i++){
-							if (player1[i].getText() == "-")
-								player1[i].setEnabled(false);
-							if (player2[i].getText() == "-")
-								player2[i].setEnabled(false);
-						}
-                                                if (player1[0].getText() == "-" || player2[0].getText() == "-")
-                                                        endcheck = true;
-                                                break;
-                                        case 3:
-						for (int i = 0; i < 7; i++){
-                                                        if (player1[i].getText() == "-")
-                                                                player1[i].setEnabled(false);
-                                                        if (player2[i].getText() == "-")
-                                                                player2[i].setEnabled(false);
-                                                	if (player3[i].getText() == "-")
-                                                                player3[i].setEnabled(false);
-						}
-                                                if (player1[0].getText() == "-" || player2[0].getText() == "-" || player3[0].getText() == "-")
-                                                        endcheck = true;
-                                                break;
-                                        case 4:
-						for (int i = 0; i < 7; i++){
-                                                        if (player1[i].getText() == "-")
-                                                                player1[i].setEnabled(false);
-                                                        if (player2[i].getText() == "-")
-                                                                player2[i].setEnabled(false);
-                                                        if (player3[i].getText() == "-")
-                                                                player3[i].setEnabled(false);
-							if (player4[i].getText() == "-")
-                                                                player4[i].setEnabled(false);
-                                                }
-                                                if (player1[0].getText() == "-" || player2[0].getText() == "-" || player3[0].getText() == "-" || player4[0].getText() == "-" )
-                                                        endcheck = true;
-                                                break;
-
-                                }
 				switch(turn){
 					case 1:
 						turn = 2;
@@ -532,26 +526,7 @@ public class Scrabble{
 				turn_points = 0;
 				board.dw = false;
 				board.tw = false;
-				if (BagTotal <= 0)
-				{
-					EmptyBagLabel.setVisible(true);
-					replace_tile.setVisible(false);
-				}
-				switch(total){
-					case 2:
-						if (player1[0].getText() == "-" || player2[0].getText() == "-")
-							endcheck = true;
-						break;
-					case 3:
-						if (player1[0].getText() == "-" || player2[0].getText() == "-" || player3[0].getText() == "-")
-							endcheck = true;
-						break;
-					case 4:
-						if (player1[0].getText() == "-" || player2[0].getText() == "-" || player3[0].getText() == "-" || player4[0].getText() == "-" )
-							endcheck = true;
-						break;
-
-				}
+				
 				switch(total){
 					case 2:
 						if (player1[0].getText() == "-" || player2[0].getText() == "-")
@@ -568,89 +543,10 @@ public class Scrabble{
 
 				}
 				if (endcheck)
-				{
-					frame.setVisible(false);
-					game_over = new JFrame("Game Over");
-					game_over.setSize(200,200);
-					game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-					JLabel end1 = new JLabel("Game Ended");
-					end1.setHorizontalAlignment(JLabel.CENTER);
-					game_over.add(end1);
-					frame.setVisible(false);
-                                	game_over = new JFrame("Game Over");
-                                	game_over.setSize(200,200);
-                                	game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-                                	int high_score = 0;
-                                	StringBuilder winner = new StringBuilder("Player 1");
-                                	for(int i = 0; i < total; i++){
-                                	        if(player_points[i] > high_score){
-                                	                high_score = player_points[i];
-                                	                winner.replace(0,7,"Player " + (i+1));
-                                	        }
-                                	}
-
-                                	JLabel end2 = new JLabel("Winner");
-                                	end2.setHorizontalAlignment(JLabel.CENTER);
-                                	game_over.add(end2);
-                                	JLabel end3 = new JLabel(String.valueOf(winner));
-                                	end3.setHorizontalAlignment(JLabel.CENTER);
-                                	game_over.add(end3);
-
-                                	JLabel end4 = new JLabel(String.valueOf(high_score));
-                                	end4.setHorizontalAlignment(JLabel.CENTER);
-                                	game_over.add(end4);
-
-                                	restart = new JButton("Restart Game");
-                        		        game_over.add(restart);
-                	                ScrabbleHandler handler = new ScrabbleHandler();
-        	                        restart.addActionListener(handler);
-
-        	                        game_over.setLayout(new GridLayout(5,1));
-	                                game_over.setVisible(true);
-
-				}
+					game.endFrame();
 
 			}else if(event.getSource() == end_game){
-				frame.setVisible(false);
-				game_over = new JFrame("Game Over");
-				game_over.setSize(200,200);
-				game_over.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				
-				JLabel end1 = new JLabel("Game Ended");
-				end1.setHorizontalAlignment(JLabel.CENTER);
-				game_over.add(end1);
-				
-				int high_score = 0;
-				StringBuilder winner = new StringBuilder("Player 1");
-				for(int i = 0; i < total; i++){
-					if(player_points[i] > high_score){
-						high_score = player_points[i];
-						winner.replace(0,10,"Player " + (i+1));
-					}
-				}
-				
-				JLabel end2 = new JLabel("Winner");
-				end2.setHorizontalAlignment(JLabel.CENTER);
-				game_over.add(end2);
-				
-				JLabel end3 = new JLabel(String.valueOf(winner));
-				end3.setHorizontalAlignment(JLabel.CENTER);
-				game_over.add(end3);
-				
-				JLabel end4 = new JLabel(String.valueOf(high_score));
-				end4.setHorizontalAlignment(JLabel.CENTER);
-				game_over.add(end4);
-				
-				restart = new JButton("Restart Game");
-				game_over.add(restart);
-				ScrabbleHandler handler = new ScrabbleHandler();
-				restart.addActionListener(handler);
-				
-				game_over.setLayout(new GridLayout(5,1));
-				game_over.setVisible(true);
-				
+				game.endFrame();
 			}else if(event.getSource() == restart){
 				game = new Scrabble();
 			}else if(event.getSource() == replace_tile){
@@ -701,9 +597,9 @@ public class Scrabble{
 						{
 							if(temp[i].getText().equals(" "))
 							{
+								count = false;
 								BlankLabel.setVisible(true);
 								BlankTile.setVisible(true);
-								
 							}
 							
 						}
@@ -722,16 +618,60 @@ public class Scrabble{
 	{
 		public void actionPerformed(ActionEvent event)
 		{
-			for(int i =0; i<7; i++)
-			{
-				if(game.player1[i].getText().equals(" ")&& (board.clicked == game.player1[i]))
-				{
-					game.player1[i].setText(BlankTile.getText());
-					BlankTile.setText("");
-					BlankLabel.setVisible(false);
-					BlankTile.setVisible(false);
-				}			
+			
+			switch(turn){
+				case 1:
+					for(int i = 0; i < 7; i++)
+					{
+						if(game.player1[i].getText().equals(" ") && (board.clicked == game.player1[i]))
+						{
+							game.player1[i].setText(BlankTile.getText());
+							BlankTile.setText("");
+							BlankLabel.setVisible(false);
+							BlankTile.setVisible(false);
+						}			
+					}
+					break;
+				case 2:
+					for(int i = 0; i < 7; i++)
+					{
+						if(game.player2[i].getText().equals(" ") && (board.clicked == game.player2[i]))
+						{
+							game.player2[i].setText(BlankTile.getText());
+							BlankTile.setText("");
+							BlankLabel.setVisible(false);
+							BlankTile.setVisible(false);
+						}			
+					}
+					break;
+				case 3:
+					for(int i = 0; i < 7; i++)
+					{
+						if(game.player3[i].getText().equals(" ") && (board.clicked == game.player3[i]))
+						{
+							game.player3[i].setText(BlankTile.getText());
+							BlankTile.setText("");
+							BlankLabel.setVisible(false);
+							BlankTile.setVisible(false);
+						}			
+					}
+					break;
+				case 4:
+					for(int i = 0; i < 7; i++)
+					{
+						if(game.player4[i].getText().equals(" ") && (board.clicked == game.player4[i]))
+						{
+							game.player4[i].setText(BlankTile.getText());
+							BlankTile.setText("");
+							BlankLabel.setVisible(false);
+							BlankTile.setVisible(false);
+						}			
+					}
+					break;
 			}
+			
+			
+			
 		}
 	}
 	
@@ -998,20 +938,24 @@ public class Scrabble{
 					for(int j = 0; j < 15; j++){
 						if(event.getSource() == tiles[i][j]){
 							//if a tile has been clicked add points and change board tile text
+					//		System.out.printf("count = %s\n",count);
 							if(clicked != null){
-								if(tiles[i][j].getText() == "DL"){
-									game.turn_points += (game.points(clicked)*2);
-								}else if(tiles[i][j].getText() == "DW"){
-									dw = true;
-									game.turn_points += game.points(clicked);
-								}else if(tiles[i][j].getText() == "TL"){
-									game.turn_points += (game.points(clicked)*3);
-								}else if(tiles[i][j].getText() == "TW"){
-									tw = true;
-									game.turn_points += game.points(clicked);
-								}else{
-									game.turn_points += game.points(clicked);
+								if(count){
+									if(tiles[i][j].getText() == "DL"){
+										game.turn_points += (game.points(clicked)*2);
+									}else if(tiles[i][j].getText() == "DW"){
+										dw = true;
+										game.turn_points += game.points(clicked);
+									}else if(tiles[i][j].getText() == "TL"){
+										game.turn_points += (game.points(clicked)*3);
+									}else if(tiles[i][j].getText() == "TW"){
+										tw = true;
+										game.turn_points += game.points(clicked);
+									}else{
+										game.turn_points += game.points(clicked);
+									}
 								}
+								
 								tiles[i][j].setText(clicked.getText());
 								tiles[i][j].setBorder(BorderFactory.createLineBorder(Color.RED));	//draw border
 								clicked = null;
@@ -1047,7 +991,7 @@ public class Scrabble{
 										player4[7 - game.replace].setBorder(BorderFactory.createLineBorder(Color.BLACK));
 										break;
 								}
-								//BagTotal = BagTotal - game.replace;
+								count = true;
 							}
 							
 							
